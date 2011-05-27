@@ -46,4 +46,19 @@ asInt_either str = fst $ foldr step (Right 0, 0) str
                                            digit + 1)
                             | otherwise = (Left ("not a digit " ++ [c]), digit + 1)
           step _ (l, digit)        = (l, digit + 1)
-          
+
+concat_foldr :: [[a]] -> [a]
+concat_foldr xs = foldr step [] xs
+    where step ys result = ys ++ result
+
+takeWhile_recur :: (a -> Bool) -> [a] -> [a]
+takeWhile_recur pred xs = keep xs []
+    where keep (x:xs') result | not (pred x) = result
+          keep (x:xs') result                = keep xs' (result ++ [x])
+          keep [] result                     = result
+
+-- Not my original idea
+takeWhile_foldr :: (a -> Bool) -> [a] -> [a]
+takeWhile_foldr pred xs = foldr step [] xs
+    where step x ys            | pred x    = x : ys
+                               | otherwise = []
