@@ -1,6 +1,8 @@
 foldl' :: (a -> b -> a) -> a -> [b] -> a
-foldl' step zero (x:xs) = foldl' step (step zero x) xs
 foldl' _    zero []     = zero
+foldl' step zero (x:xs) =
+    let new = step zero x
+    in new `seq` foldl' step new xs
 
 foldr' :: (a -> b -> b)  -> b -> [a] -> b
 foldr' step zero (x:xs) = step x (foldr' step zero xs)
@@ -26,4 +28,8 @@ identity xs = foldr (:) [] xs
 
 append :: [a] -> [a] -> [a]
 append xs ys = foldr (:) ys xs
-                     
+
+strictPair (a, b) = a `seq` b `seq` (a,b)
+
+strictList (x:xs) = x `seq` x : strictList xs
+strictList [] = []
